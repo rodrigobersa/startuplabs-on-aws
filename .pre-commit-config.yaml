@@ -43,3 +43,7 @@ repos:
       - id: terraform_checkov
         args:
           - --args=--skip-check CKV_TF_1
+  - repo: https://github.com/awslabs/automated-security-helper
+    rev: v3.5.4
+    hooks:
+      - id: ash-simple-scan
