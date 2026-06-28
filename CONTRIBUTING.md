@@ -6,7 +6,6 @@ documentation, we greatly value feedback and contributions from our community.
 Please read through this document before submitting any issues or pull requests to ensure we have all the necessary
 information to effectively respond to your bug report or contribution.
 
-
 ## Reporting Bugs/Feature Requests
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
@@ -19,6 +18,26 @@ reported the issue. Please try to include as much information as you can. Detail
 * Any modifications you've made relevant to the bug
 * Anything unusual about your environment or deployment
 
+## Development Setup
+
+After cloning the repository, run:
+
+    make setup
+
+This installs pre-commit hooks that automatically scan your code for security
+issues before each commit using ASH (Automated Security Helper).
+
+### What happens on commit?
+
+- ASH scans your staged changes for security vulnerabilities
+- If HIGH or CRITICAL findings are detected, the commit is blocked
+- Fix the reported issues and commit again
+
+### Bypass (emergency only)
+
+    git commit --no-verify -m "your message"
+
+Bypassed commits will still be caught by CI/CD and blocked at PR merge.
 
 ## Contributing via Pull Requests
 Contributions via pull requests are much appreciated. Before sending us a pull request, please ensure that:
@@ -31,7 +50,7 @@ To send us a pull request, please:
 
 1. Fork the repository.
 2. Modify the source; please focus on the specific change you are contributing. If you also reformat all the code, it will be hard for us to focus on your change.
-3. Ensure local tests pass.
+3. Ensure local tests and ASH scan pass.
 4. Commit to your fork using clear commit messages.
 5. Send us a pull request, answering any default questions in the pull request interface.
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
