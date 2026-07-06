@@ -1,0 +1,102 @@
+project_name: startuplabs-on-aws
+
+global_settings:
+  # Set severity threshold - only findings at this level or above will be reported
+  # For pre-commit, HIGH as a good balance between noise and catching real issues
+  severity_threshold: HIGH
+
+  # Paths to ignore during scanning (reduces scan time for pre-commit)
+  ignore_paths:
+    - path: 'node_modules/'
+      reason: 'Third-party dependencies'
+    - path: 'vendor/'
+      reason: 'Third-party dependencies'
+    - path: '.venv/'
+      reason: 'Virtual environment'
+    - path: 'tests/fixtures/'
+      reason: 'Test fixtures and mock data'
+    - path: 'dist/'
+      reason: 'Build output'
+    - path: '*.min.js'
+      reason: 'Minified files'
+
+  # Suppress known false positives
+  suppressions:
+    - rule_id: 'CKV_AWS_144'
+      file_path: 'terraform/dev/*.tf'
+      reason: 'Cross-region replication not required in dev'
+      expiration: '2026-12-31'
+
+  # CRITICAL: This makes the hook fail (non-zero exit) when findings exist
+  # This is what actually blocks the commit
+  fail_on_findings: true
+
+# Converters - transform files before scanning
+converters:
+  jupyter:
+    enabled: true
+  archive:
+    enabled: true
+
+# Scanners - enable only what's relevant to keep pre-commit fast
+scanners:
+  bandit:
+    enabled: true
+    options:
+      confidence_level: HIGH
+      severity_level: medium
+
+  semgrep:
+    enabled: true
+    options:
+      rules: ['p/ci']
+      timeout: 120  # Keep timeout tight for pre-commit
+      tool_version: '>=1.125.0'
+      install_timeout: 300
+
+  detect-secrets:
+    enabled: true
+    options:
+      exclude_lines: []
+      exclude_files: []
+
+  checkov:
+    enabled: true
+    options:
+      framework: ['all']
+      tool_version: '>=3.2.0,<4.0.0'
+      install_timeout: 300
+
+  grype:
+    enabled: true
+    options:
+      severity_threshold: MEDIUM
+
+  # Disable heavier scanners for pre-commit speed (enable in CI instead)
+  syft:
+    enabled: false
+  cfn-nag:
+    enabled: false
+  cdk-nag:
+    enabled: false
+
+# Reporters - lightweight output for pre-commit
+reporters:
+  markdown:
+    enabled: true
+    options:
+      include_detailed_findings: true
+  json:
+    enabled: true
+    options:
+      pretty_print: true
+  # SARIF is useful if integrating with GitHub code scanning
+  sarif:
+    enabled: true
+    options:
+      include_help_uri: true
+  # Disable heavier reports for pre-commit
+  html:
+    enabled: false
+  csv:
+    enabled: false
