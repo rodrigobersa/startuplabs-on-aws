@@ -36,7 +36,7 @@ jobs:
             -o /tmp/grype.tar.gz
           curl -sSfL "https://github.com/anchore/grype/releases/download/${GRYPE_VERSION}/grype_${GRYPE_VERSION#v}_checksums.txt" \
             -o /tmp/grype_checksums.txt
-          cd /tmp && grep "grype_${GRYPE_VERSION#v}_linux_amd64.tar.gz" grype_checksums.txt | sha256sum --check
+          (cd /tmp && grep "grype_${GRYPE_VERSION#v}_linux_amd64.tar.gz" grype_checksums.txt | sha256sum --check)
           tar -xzf /tmp/grype.tar.gz -C /usr/local/bin grype
 
           # Syft - download release binary directly (avoids curl|sh pattern)
@@ -44,7 +44,7 @@ jobs:
             -o /tmp/syft.tar.gz
           curl -sSfL "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION#v}_checksums.txt" \
             -o /tmp/syft_checksums.txt
-          cd /tmp && grep "syft_${SYFT_VERSION#v}_linux_amd64.tar.gz" syft_checksums.txt | sha256sum --check
+          (cd /tmp && grep "syft_${SYFT_VERSION#v}_linux_amd64.tar.gz" syft_checksums.txt | sha256sum --check)
           tar -xzf /tmp/syft.tar.gz -C /usr/local/bin syft
 
           # cfn-nag - CloudFormation security linter
@@ -57,7 +57,7 @@ jobs:
         if: always()
         uses: github/codeql-action/upload-sarif@adfda868f108ac4222129de456ea554034a27db7 # v4
         with:
-          sarif_file: .ash/ash_output/reports/ash.ghas.sarif
+          sarif_file: .ash/ash_output/reports/ash.sarif
           category: ash-security-scan
 
       - name: Upload scan results
