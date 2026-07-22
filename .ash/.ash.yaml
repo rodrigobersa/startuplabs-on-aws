@@ -7,6 +7,8 @@ global_settings:
 
   # Paths to ignore during scanning (reduces scan time for pre-commit)
   ignore_paths:
+    - path: '.github/workflows/'
+      reason: 'CI workflow files managed separately'
     - path: 'node_modules/'
       reason: 'Third-party dependencies'
     - path: 'vendor/'
