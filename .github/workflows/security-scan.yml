@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
@@ -27,26 +27,11 @@ jobs:
         run: pip install 'automated-security-helper[cdk] @ git+https://github.com/awslabs/automated-security-helper.git@v3'
 
       - name: Install scanner dependencies
-        env:
-          GRYPE_VERSION: "v0.116.0"
-          SYFT_VERSION: "v1.49.0"
         run: |
-          # Grype - download release binary directly (avoids curl|sh pattern)
-          curl -sSfL "https://github.com/anchore/grype/releases/download/${GRYPE_VERSION}/grype_${GRYPE_VERSION#v}_linux_amd64.tar.gz" \
-            -o /tmp/grype.tar.gz
-          curl -sSfL "https://github.com/anchore/grype/releases/download/${GRYPE_VERSION}/grype_${GRYPE_VERSION#v}_checksums.txt" \
-            -o /tmp/grype_checksums.txt
-          (cd /tmp && grep "grype_${GRYPE_VERSION#v}_linux_amd64.tar.gz" grype_checksums.txt | sha256sum --check)
-          tar -xzf /tmp/grype.tar.gz -C /usr/local/bin grype
-
-          # Syft - download release binary directly (avoids curl|sh pattern)
-          curl -sSfL "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION#v}_linux_amd64.tar.gz" \
-            -o /tmp/syft.tar.gz
-          curl -sSfL "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VERSION#v}_checksums.txt" \
-            -o /tmp/syft_checksums.txt
-          (cd /tmp && grep "syft_${SYFT_VERSION#v}_linux_amd64.tar.gz" syft_checksums.txt | sha256sum --check)
-          tar -xzf /tmp/syft.tar.gz -C /usr/local/bin syft
-
+          # Grype - vulnerability scanner for containers and dependencies
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          # Syft - SBOM generator
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
           # cfn-nag - CloudFormation security linter
           sudo gem install cfn-nag
 
@@ -55,14 +40,14 @@ jobs:
 
       - name: Upload SARIF to GitHub Advanced Security
         if: always()
-        uses: github/codeql-action/upload-sarif@adfda868f108ac4222129de456ea554034a27db7 # v4
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: .ash/ash_output/reports/ash.sarif
           category: ash-security-scan
 
       - name: Upload scan results
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@v5
         with:
           name: ash-results
           path: .ash/ash_output/
