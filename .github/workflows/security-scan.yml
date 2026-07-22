@@ -36,7 +36,7 @@ jobs:
           sudo gem install cfn-nag
 
       - name: Run ASH scan
-        run: ash --mode local --no-fail-on-findings
+        run: ash --mode local
 
       - name: Upload SARIF to GitHub Advanced Security
         if: always()
