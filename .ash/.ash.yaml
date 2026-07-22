@@ -68,13 +68,17 @@ scanners:
     options:
       severity_threshold: MEDIUM
 
-  # Disable heavier scanners for pre-commit speed (enable in CI instead)
   syft:
-    enabled: false
+    enabled: true
+
   cfn-nag:
-    enabled: false
+    enabled: true
+
   cdk-nag:
-    enabled: false
+    enabled: true
+
+  opengrep:
+    enabled: true
 
 # Reporters - lightweight output for pre-commit
 reporters:

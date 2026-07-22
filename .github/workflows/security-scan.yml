@@ -24,7 +24,16 @@ jobs:
           python-version: '3.12'
 
       - name: Install ASH
-        run: pip install git+https://github.com/awslabs/automated-security-helper.git@v3
+        run: pip install 'automated-security-helper[cdk] @ git+https://github.com/awslabs/automated-security-helper.git@v3'
+
+      - name: Install scanner dependencies
+        run: |
+          # Grype - vulnerability scanner for containers and dependencies
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          # Syft - SBOM generator
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          # cfn-nag - CloudFormation security linter
+          sudo gem install cfn-nag
 
       - name: Run ASH scan
         run: ash --mode local --no-fail-on-findings
