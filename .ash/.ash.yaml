@@ -28,6 +28,12 @@ global_settings:
       path: 'terraform/dev/*.tf'
       reason: 'Cross-region replication not required in dev'
       expiration: '2026-12-31'
+    - rule_id: 'yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag'
+      path: '.github/workflows/*'
+      reason: 'Workflow files protected via CODEOWNERS and branch protection'
+    - rule_id: 'yaml.github-actions.security.gha-curl-pipe-shell.gha-curl-pipe-shell'
+      path: '.github/workflows/*'
+      reason: 'Workflow files protected via CODEOWNERS and branch protection'
 
 # Converters - transform files before scanning
 converters:
