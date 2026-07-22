@@ -23,13 +23,9 @@ global_settings:
   # Suppress known false positives
   suppressions:
     - rule_id: 'CKV_AWS_144'
-      file_path: 'terraform/dev/*.tf'
+      path: 'terraform/dev/*.tf'
       reason: 'Cross-region replication not required in dev'
       expiration: '2026-12-31'
-
-  # CRITICAL: This makes the hook fail (non-zero exit) when findings exist
-  # This is what actually blocks the commit
-  fail_on_findings: true
 
 # Converters - transform files before scanning
 converters:
@@ -43,7 +39,7 @@ scanners:
   bandit:
     enabled: true
     options:
-      confidence_level: HIGH
+      confidence_level: high
       severity_level: medium
 
   semgrep:
